@@ -1,0 +1,378 @@
+function makeChanges(courseId){
+	//get entering mode
+	var enteringMode=$('#enteringMode').val();
+	//get ca entered
+	var continous=$('#continous'+courseId).val();
+	//get sessional mark
+	var sessional=$('#sessional'+courseId).val();
+	//get course id
+	var courseId=courseId;
+	//get student id
+	var studentId=$('#studentId'+courseId).val();
+	//get student id
+	var resultId=$('#resultId'+courseId).val();
+	//get request id
+	var requestId=$('#requestId'+courseId).val();
+	var formData="mode="+enteringMode+"&continous="+continous+"&sessional="+sessional+"&courseId="+courseId+"&studentId="+studentId+"&resultId="+resultId+"&requestId="+requestId;
+	$.ajax({
+		url:"handlerResults.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			var result=data.split('_');
+			$('#finalMark'+courseId).html(result[0]);
+			$('#finalGrade'+courseId).html(result[1]);
+			$('#status'+courseId).html('not saved');
+		}
+	})
+}
+function calculateSessionalWeight(){
+	//get ca weight
+	var ca=$('#caWeight').val();
+    var sessional=100-ca;
+	$('#sessionalWeight').val(sessional);
+}
+function calculateCaWeight(){
+	//get ca weight
+	var sessional=$('#sessionalWeight').val();
+    var ca=100-sessional;
+	$('#caWeight').val(ca);
+}
+function saveResult(courseId){
+	//get entering mode
+	var enteringMode=$('#enteringMode').val();
+	//get ca entered
+	var continous=$('#continous'+courseId).val();
+	//get sessional mark
+	var sessional=$('#sessional'+courseId).val();
+	//get course id
+	var courseId=courseId;
+	//get student id
+	var studentId=$('#studentId'+courseId).val();
+	//get student id
+	var resultId=$('#resultId'+courseId).val();
+	//get request id
+	var requestId=$('#requestId'+courseId).val();
+	var formData="modeSaving="+enteringMode+"&continous="+continous+"&sessional="+sessional+"&courseId="+courseId+"&studentId="+studentId+"&resultId="+resultId+"&requestId="+requestId;
+	$.ajax({
+		url:"handlerResults.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			var response=data.split('|');
+			$('#caMark'+courseId).html(response[0]);
+			$('#sessMark'+courseId).html(response[1]);
+			$('#status'+courseId).html(response[2]);
+		}
+	})
+}
+function saveSetup(){
+	//get setup string
+	var setupValues=$('#setUp').val();
+	//get out of ca
+	var continous=$('#markOutOfCA').val();
+	//get ca weight
+	var caWeight=$('#caWeight').val();
+	//get out of sessional
+	var sessional=$('#markOutOfSessional').val();
+	//get sessional Weight
+	var sessionalWeight=$('#sessionalWeight').val();
+	var formData="setupValues="+setupValues+"&continous="+continous+"&caWeight="+caWeight+"&sessional="+sessional+"&sessionalWeight="+sessionalWeight;
+	$.ajax({
+		url:"handlerResults.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			//reopen results tab with opened fields
+			if(data=="success"){
+				var values=setupValues.split('_');
+				$("#continous"+values[0]).prop("disabled", false);
+				$("#sessional"+values[0]).prop("disabled", false);
+				$('#myModal').modal('hide');
+				$('#active').modal('show');
+				
+			}else{
+				$('#errorModal').modal('show');
+			}
+		}
+	})
+}
+function openSetup(setupString){
+	var formData="setup="+setupString;
+	$.ajax({
+		url:"handlerApprovalProcess.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#active').modal('hide');
+			$('#fillModal').html(data);
+			$('#myModal').modal('show');
+		}
+	})
+}
+function openModal(sin){
+	var gotten=sin;
+	var formData="sin="+gotten;
+	$.ajax({
+		url:"handlerApprovalProcess.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#fillModal').html(data);
+			$('#myModal').modal('show');
+		}
+	})
+}
+function openReportModal(programme){
+	var gotten=programme;
+	var formData="programme="+gotten;
+	$.ajax({
+		url:"handlerReports.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#fillModal').html(data);
+			$('#myModal').modal('show');
+		}
+	})
+}
+function openReportModalDepartment(department){
+	var gotten=department;
+	var year=$('#year').val();
+	var formData="department="+gotten+"&year="+year;
+	$.ajax({
+		url:"handlerReports.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#fillModal').html(data);
+			$('#myModal').modal('show');
+		}
+	})
+}
+function openReportModalSchool(school){
+	var gotten=school;
+	var year=$('#year').val();
+	var formData="school="+gotten+"&year="+year;
+	$.ajax({
+		url:"handlerReports.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#fillModal').html(data);
+			$('#myModal').modal('show');
+		}
+	})
+}
+function openActive(sin){
+	var gotten=sin;
+	var formData="sinActive="+gotten;
+	$.ajax({
+		url:"handlerApprovalProcess.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#fillActiveModal').html(data);
+			$('#active').modal('show');
+		}
+	})
+
+}
+function enterResults(course){
+	$('#active').modal('hide');
+	var gotten=course;
+	var formData="course="+gotten;
+	$.ajax({
+		url:"handlerResults.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#fillModal').html(data);
+			$('#myModal').modal('show');
+		}
+	})
+}
+function openProcessed(sin){
+	var gotten=sin;
+	var formData="sinProcessed="+gotten;
+	$.ajax({
+		url:"handlerApprovalProcess.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#fillActiveModal').html(data);
+			$('#active').modal('show');
+		}
+	})
+
+}
+function readURL(input) {
+	if (input.files) {
+		$("#pdfSelected").show();
+		var reader = new FileReader();
+
+		reader.onload = function (e) {
+		$('#prevselfie').show();
+		$('#blah').attr('data', e.target.result);
+		}
+		$("#pdfSelected").hide();
+		reader.readAsDataURL(input.files[0]);
+	}
+}
+function showSupporting(){
+	var input = document.getElementById('supporting');
+	var name=$('#supporting').val();
+	$('.filename').html(name);
+	readURL(input);
+}
+function getYearcourses(){
+	//get form contents
+	var yearSelected=$('#selectYear').val();
+	if(yearSelected!='noChoice'){
+		var fmData="getCourses="+yearSelected;
+		$.ajax({
+			url:"handler.php",
+			type: "POST",
+			data:fmData,
+			success:function(data){
+				if (data.indexOf('mulanda') > -1) {
+				//	$('#myForm').hide();
+				//	$('#prevselfie').hide();
+					$('#coursesHere').html(data);
+				}else{
+					$('#myForm').show();
+					$('#prevselfie').show();
+					$('#coursesHere').html(data);
+				}
+			}
+		})
+	}else{
+		var data='<p>choose year above first</p>';
+		$('#coursesHere').html(data);
+	}
+}
+function checkPublished(){
+	//get form contents
+	var yearSelected=$('#chosenAcademicYear').val();
+	var fmData="checkPublished="+yearSelected;
+	$.ajax({
+		url:"handler.php",
+		type: "POST",
+		data:fmData,
+		success:function(data){
+			if (data=='published') {
+				$('#myForm').show();			
+			}else{
+				$('#myForm').hide();
+				$('#coursesHere').html(data);
+			}
+
+		}
+	})
+}
+$(window).load(function() {
+	// Animate loader off screen
+	$(".se-pre-con").fadeOut("slow");
+});
+function openStudentModal(clicked){
+	$('#remark').val(clicked);
+	$('#myModal').modal('show');
+}
+function changeContent(){
+	var selected=$('#selected').val();
+	$("#mainBody").hide();
+	$("#loader").show();
+	if(selected=='choose'){
+		alert('please choose a reason');
+	}else{
+		var formData="selection="+selected;
+		$.ajax({
+			url:"handler.php",
+			type: "POST",
+			data:formData,
+			success:function(data){
+				
+				if (data.indexOf('mulanda') > -1) {
+					
+					$("#loader").hide();
+				    $("#mainBody").show();
+					$('#showingCourses').html(data);
+					$('#myForm').hide();
+					$('#prevselfie').hide();
+					setTimeout(getYearcourses(),500);
+					
+				}else{
+					//get form contents
+						var fmData="selectionForm="+selected;
+						$.ajax({
+							url:"handler.php",
+							type: "POST",
+							data:fmData,
+							success:function(data){
+									$('#myForm').html(data);
+							}
+						})
+						
+					$("#loader").hide();
+				    $("#mainBody").show();
+					$('#showingCourses').html(data);
+					$('#myForm').show();
+					
+					setTimeout(getYearcourses(),500);
+				}
+			}
+		})
+	}
+}
+function checkOptionSelection(){
+
+if ($('input:checkbox').filter(':checked').length==0){
+    alert('Please Select atleast one Course');
+}else{
+   $("#appealForm").submit();
+}
+}
+
+function checkCheckbox(){
+	if ($(". input:checkbox:checked").length > 0){
+		return true;
+	}else{
+	   return false;
+	}
+	}
+
+function checking(){
+	alert('yes');
+	if ($("#checkAll").is(':checked')) {
+		$("input[type=checkbox]").each(function () {
+			$(this).prop("checked", false);
+		});
+
+	} else {
+		$("input[type=checkbox]").each(function () {
+			$(this).prop("checked", true);
+		});
+	}
+}
+function openProcessedDean(sin){
+	var gotten=sin;
+	var formData="sinProcessedDean="+gotten;
+	$.ajax({
+		url:"handlerApprovalProcess.php",
+		type: "POST",
+		data:formData,
+		success:function(data){
+			$('#fillActiveModal').html(data);
+			$('#active').modal('show');
+		}
+	})
+
+}
+function openChoice(){
+	var choice=confirm('Are you sure you want to submit this form?');
+	if(choice==true){
+		return true;
+	}else{
+		return false;
+	}
+}
